@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "./Icons";
+import { useLanguage } from "../context/LanguageContext";
 
 export const ProjectModal = ({ project, onClose }) => {
+  const { t } = useLanguage();
   const [modalTab, setModalTab] = useState("overview");
 
   useEffect(() => {
@@ -11,11 +13,13 @@ export const ProjectModal = ({ project, onClose }) => {
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", handleKeyDown);
-    document.body.style.overflow = "hidden";
+    document.documentElement.classList.add("modal-open");
+    document.body.classList.add("modal-open");
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "unset";
+      document.documentElement.classList.remove("modal-open");
+      document.body.classList.remove("modal-open");
     };
   }, [project, onClose]);
 
@@ -30,7 +34,7 @@ export const ProjectModal = ({ project, onClose }) => {
             <h3 className="modal-title">{project.title}</h3>
             <p className="modal-subtitle">{project.subtitle}</p>
           </div>
-          <button className="modal-close-btn" onClick={onClose} aria-label="Close modal">
+          <button className="modal-close-btn" onClick={onClose} aria-label={t("modals.close")}>
             <Icon name="close" size={20} />
           </button>
         </div>
@@ -42,21 +46,21 @@ export const ProjectModal = ({ project, onClose }) => {
             onClick={() => setModalTab("overview")}
           >
             <Icon name="cpu" size={14} />
-            <span>Architecture & Overview</span>
+            <span>{t("modals.projectDeepDive.tabOverview")}</span>
           </button>
           <button
             className={`project-modal-tab ${modalTab === "features" ? "active" : ""}`}
             onClick={() => setModalTab("features")}
           >
             <Icon name="sparkles" size={14} />
-            <span>Key Implementations ({project.keyFeatures?.length || 0})</span>
+            <span>{t("modals.projectDeepDive.tabFeatures")} ({project.keyFeatures?.length || 0})</span>
           </button>
           <button
             className={`project-modal-tab ${modalTab === "stack" ? "active" : ""}`}
             onClick={() => setModalTab("stack")}
           >
             <Icon name="code" size={14} />
-            <span>Tech Stack & Metrics</span>
+            <span>{t("modals.projectDeepDive.tabStack")}</span>
           </button>
         </div>
 
@@ -71,7 +75,7 @@ export const ProjectModal = ({ project, onClose }) => {
 
               <div className="modal-section" style={{ marginTop: "20px" }}>
                 <h4 className="modal-section-title">
-                  <Icon name="cpu" size={16} /> Engineering Summary
+                  <Icon name="cpu" size={16} /> {t("modals.projectDeepDive.engineeringSummary")}
                 </h4>
                 <p className="modal-desc">{project.description}</p>
               </div>
@@ -93,7 +97,7 @@ export const ProjectModal = ({ project, onClose }) => {
             <div className="modal-tab-pane animate-fade-in">
               <div className="modal-section">
                 <h4 className="modal-section-title">
-                  <Icon name="sparkles" size={16} /> Architectural Innovations & Highlights
+                  <Icon name="sparkles" size={16} /> {t("modals.projectDeepDive.innovations")}
                 </h4>
                 <ul className="modal-features-list">
                   {project.keyFeatures?.map((feat, i) => (
@@ -111,12 +115,12 @@ export const ProjectModal = ({ project, onClose }) => {
             <div className="modal-tab-pane animate-fade-in">
               <div className="modal-section">
                 <h4 className="modal-section-title">
-                  <Icon name="code" size={16} /> Technologies & Production Tooling
+                  <Icon name="code" size={16} /> {t("modals.projectDeepDive.tooling")}
                 </h4>
                 <div className="modal-tech-tags">
-                  {project.tags?.map((t, i) => (
+                  {project.tags?.map((tTag, i) => (
                     <span key={i} className="tech-tag">
-                      {t}
+                      {tTag}
                     </span>
                   ))}
                 </div>
@@ -125,7 +129,7 @@ export const ProjectModal = ({ project, onClose }) => {
               {project.stats && (
                 <div className="modal-section" style={{ marginTop: "20px" }}>
                   <h4 className="modal-section-title">
-                    <Icon name="chart" size={16} /> Performance & Scale Benchmarks
+                    <Icon name="chart" size={16} /> {t("modals.projectDeepDive.benchmarks")}
                   </h4>
                   <div className="modal-stats-grid">
                     {Object.entries(project.stats).map(([key, val], i) => (
@@ -149,10 +153,10 @@ export const ProjectModal = ({ project, onClose }) => {
             rel="noopener noreferrer"
             className="btn btn-primary"
           >
-            <Icon name="github" size={18} /> View on GitHub
+            <Icon name="github" size={18} /> {t("modals.projectDeepDive.viewOnGithub")}
           </a>
           <button className="btn btn-ghost" onClick={onClose}>
-            Close
+            {t("modals.close")}
           </button>
         </div>
       </div>

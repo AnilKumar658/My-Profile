@@ -17,9 +17,13 @@ import { ArchitectureSpotlight } from "./components/ArchitectureSpotlight";
 import { ContactSection } from "./components/ContactSection";
 import { ProjectModal } from "./components/ProjectModal";
 import { ResumeModal } from "./components/ResumeModal";
+import { useLanguage } from "./context/LanguageContext";
+import { LanguageSwitcher } from "./components/LanguageSwitcher";
 
 export default function App() {
+  const { t } = useLanguage();
   const [activeFilter, setActiveFilter] = useState("All");
+
   const [selectedProject, setSelectedProject] = useState(null);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
   const [resumeCopied, setResumeCopied] = useState(false);
@@ -49,9 +53,11 @@ export default function App() {
   // Lock body scroll when mobile drawer is open & handle Escape key
   useEffect(() => {
     if (mobileMenuOpen) {
-      document.body.style.overflow = "hidden";
+      document.documentElement.classList.add("modal-open");
+      document.body.classList.add("modal-open");
     } else {
-      document.body.style.overflow = "unset";
+      document.documentElement.classList.remove("modal-open");
+      document.body.classList.remove("modal-open");
     }
     const handleKeyDown = (e) => {
       if (e.key === "Escape") setMobileMenuOpen(false);
@@ -59,17 +65,18 @@ export default function App() {
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "unset";
+      document.documentElement.classList.remove("modal-open");
+      document.body.classList.remove("modal-open");
     };
   }, [mobileMenuOpen]);
 
   const [activeSkillFilter, setActiveSkillFilter] = useState("All");
 
   const projectCategories = [
-    { id: "All", label: "All Projects", icon: "terminal", count: projects.length },
-    { id: "Full-Stack & AI", label: "Full-Stack & Mobile", icon: "code", count: projects.filter((p) => p.category === "Full-Stack & AI").length },
-    { id: "AI & Machine Learning", label: "AI & Deep Learning", icon: "brain", count: projects.filter((p) => p.category === "AI & Machine Learning").length },
-    { id: "Data Engineering", label: "Data & Cloud Pipelines", icon: "database", count: projects.filter((p) => p.category === "Data Engineering").length }
+    { id: "All", label: t("projects.allProjects"), icon: "terminal", count: projects.length },
+    { id: "Full-Stack & AI", label: t("projects.fullstack"), icon: "code", count: projects.filter((p) => p.category === "Full-Stack & AI").length },
+    { id: "AI & Machine Learning", label: t("projects.aiMl"), icon: "brain", count: projects.filter((p) => p.category === "AI & Machine Learning").length },
+    { id: "Data Engineering", label: t("projects.dataEng"), icon: "database", count: projects.filter((p) => p.category === "Data Engineering").length }
   ];
 
   const filteredProjects =
@@ -108,17 +115,19 @@ export default function App() {
           </a>
 
           <nav className="nav-links">
-            <a href="#about">About</a>
-            <a href="#skills">Skills</a>
-            <a href="#projects">Projects</a>
-            <a href="#resume">Resume</a>
-            <a href="#experience">Experience</a>
-            <a href="#education">Education</a>
-            <a href="#certifications">Certifications</a>
-            <a href="#contact">Contact</a>
+            <a href="#about">{t("nav.about")}</a>
+            <a href="#skills">{t("nav.skills")}</a>
+            <a href="#projects">{t("nav.projects")}</a>
+            <a href="#resume">{t("nav.resume")}</a>
+            <a href="#experience">{t("nav.experience")}</a>
+            <a href="#education">{t("nav.education")}</a>
+            <a href="#certifications">{t("nav.certifications")}</a>
+            <a href="#contact">{t("nav.contact")}</a>
           </nav>
 
           <div className="nav-actions">
+            <LanguageSwitcher />
+
             <button
               onClick={() => setIsResumeOpen(true)}
               className="btn-nav-resume"
@@ -126,7 +135,7 @@ export default function App() {
               id="nav-resume-btn"
             >
               <Icon name="sparkles" size={14} />
-              <span>Resume</span>
+              <span>{t("nav.resume")}</span>
             </button>
 
             <a
@@ -150,7 +159,7 @@ export default function App() {
             </a>
 
             <a href="#contact" className="btn btn-primary btn-hire-me">
-              <span>Hire Me</span>
+              <span>{t("nav.hireMe")}</span>
             </a>
 
             <button
@@ -185,28 +194,31 @@ export default function App() {
                 <span className="brand-title">Full-Stack AI & Data</span>
               </div>
             </div>
-            <button
-              className="mobile-drawer-close"
-              onClick={() => setMobileMenuOpen(false)}
-              aria-label="Close menu"
-            >
-              <Icon name="close" size={20} />
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <LanguageSwitcher isMobile={true} />
+              <button
+                className="mobile-drawer-close"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close menu"
+              >
+                <Icon name="close" size={20} />
+              </button>
+            </div>
           </div>
 
           <div className="mobile-drawer-body">
             <nav className="mobile-nav-links">
               <a href="#about" onClick={() => setMobileMenuOpen(false)}>
                 <Icon name="brain" size={18} />
-                <span>About & Overview</span>
+                <span>{t("nav.about")}</span>
               </a>
               <a href="#skills" onClick={() => setMobileMenuOpen(false)}>
                 <Icon name="code" size={18} />
-                <span>Skills & Matrix</span>
+                <span>{t("nav.skills")}</span>
               </a>
               <a href="#projects" onClick={() => setMobileMenuOpen(false)}>
                 <Icon name="terminal" size={18} />
-                <span>Featured Projects</span>
+                <span>{t("nav.projects")}</span>
               </a>
               <a
                 href="#resume"
@@ -217,26 +229,27 @@ export default function App() {
                 className="mobile-nav-resume-item"
               >
                 <Icon name="sparkles" size={18} />
-                <span>Official Resume & CV</span>
+                <span>{t("nav.resume")}</span>
                 <span className="mobile-pill-badge">Preview</span>
               </a>
               <a href="#experience" onClick={() => setMobileMenuOpen(false)}>
                 <Icon name="database" size={18} />
-                <span>Work Experience</span>
+                <span>{t("nav.experience")}</span>
               </a>
               <a href="#education" onClick={() => setMobileMenuOpen(false)}>
                 <Icon name="shield-check" size={18} />
-                <span>Education (9.12 CGPA)</span>
+                <span>{t("nav.education")}</span>
               </a>
               <a href="#certifications" onClick={() => setMobileMenuOpen(false)}>
                 <Icon name="shield-check" size={18} />
-                <span>Certifications (5)</span>
+                <span>{t("nav.certifications")}</span>
               </a>
               <a href="#contact" onClick={() => setMobileMenuOpen(false)}>
                 <Icon name="mail" size={18} />
-                <span>Contact & Hire Me</span>
+                <span>{t("nav.contact")}</span>
               </a>
             </nav>
+
 
             <div className="mobile-drawer-cta-wrap">
               <div className="mobile-resume-action-row">
@@ -249,7 +262,7 @@ export default function App() {
                   }}
                 >
                   <Icon name="sparkles" size={16} />
-                  <span>Preview Resume</span>
+                  <span>{t("resumeShowcase.previewBtn")}</span>
                 </button>
                 <a
                   href={resumeData.localPdf}
@@ -259,7 +272,7 @@ export default function App() {
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <Icon name="arrow-right" size={16} style={{ transform: "rotate(90deg)" }} />
-                  <span>Download PDF</span>
+                  <span>{t("resumeShowcase.downloadBtn")}</span>
                 </a>
               </div>
 
@@ -305,20 +318,22 @@ export default function App() {
           <div className="hero-content">
             <div className="hero-status-pill">
               <span className="status-pulse-dot" />
-              <span>Available for High-Impact Roles & Projects</span>
+              <span>{t("hero.status")}</span>
             </div>
 
             <h1 className="hero-headline">
-              Engineering <span className="gradient-text">Intelligent Systems</span> from Data Pipelines to Production AI.
+              {t("hero.headlineStart")}{" "}
+              <span className="gradient-text">{t("hero.headlineGradient")}</span>{" "}
+              {t("hero.headlineEnd")}
             </h1>
 
             <p className="hero-tagline">
-              Hi, I'm <strong>{personalInfo.name}</strong>. I bridge complex deep learning research, scalable cloud data engineering in Azure, and high-performance full-stack web applications.
+              {t("hero.tagline")}
             </p>
 
             <div className="hero-actions">
               <a href="#projects" className="btn btn-primary">
-                <span>Explore Featured Work</span>
+                <span>{t("hero.exploreWork")}</span>
                 <Icon name="arrow-right" size={18} />
               </a>
               <button
@@ -328,11 +343,11 @@ export default function App() {
                 id="hero-resume-btn"
               >
                 <Icon name="sparkles" size={18} />
-                <span>Resume / CV</span>
+                <span>{t("hero.resumeCv")}</span>
               </button>
               <a href="#contact" className="btn btn-ghost">
                 <Icon name="mail" size={18} />
-                <span>Get In Touch</span>
+                <span>{t("hero.getInTouch")}</span>
               </a>
               <a
                 href={personalInfo.github}
@@ -341,7 +356,7 @@ export default function App() {
                 className="btn btn-ghost"
               >
                 <Icon name="github" size={18} />
-                <span>GitHub (12+)</span>
+                <span>{t("hero.githubRepos")}</span>
               </a>
             </div>
 
@@ -349,7 +364,15 @@ export default function App() {
               {personalInfo.stats.map((s, i) => (
                 <div key={i} className="stat-item">
                   <span className="stat-value">{s.value}</span>
-                  <span className="stat-label">{s.label}</span>
+                  <span className="stat-label">
+                    {i === 0
+                      ? t("hero.stats.experience")
+                      : i === 1
+                      ? t("hero.stats.cgpa")
+                      : i === 2
+                      ? t("hero.stats.repos")
+                      : t("hero.stats.certifications")}
+                  </span>
                 </div>
               ))}
             </div>
@@ -365,10 +388,10 @@ export default function App() {
       <section id="about" className="section">
         <div className="container">
           <div className="section-header">
-            <span className="section-eyebrow">Core Expertise</span>
-            <h2 className="section-title">Architecting Across the Stack</h2>
+            <span className="section-eyebrow">{t("about.eyebrow")}</span>
+            <h2 className="section-title">{t("about.title")}</h2>
             <p className="section-desc">
-              From raw telemetry and multi-decadal meteorological data to neural networks and interactive web platforms, I deliver robust end-to-end solutions.
+              {t("about.desc")}
             </p>
           </div>
 
@@ -397,10 +420,10 @@ export default function App() {
       <section id="skills" className="section">
         <div className="container">
           <div className="section-header">
-            <span className="section-eyebrow">Technical Mastery</span>
-            <h2 className="section-title">Skills & Technologies</h2>
+            <span className="section-eyebrow">{t("skills.eyebrow")}</span>
+            <h2 className="section-title">{t("skills.title")}</h2>
             <p className="section-desc">
-              A comprehensive toolkit honed across production projects, academic research, and cloud implementations.
+              {t("skills.desc")}
             </p>
           </div>
 
@@ -411,7 +434,7 @@ export default function App() {
               onClick={() => setActiveSkillFilter("All")}
             >
               <Icon name="terminal" size={14} />
-              <span>All Disciplines</span>
+              <span>{t("skills.allDisciplines")}</span>
             </button>
             {skillsCategories.map((cat, idx) => (
               <button
@@ -462,10 +485,10 @@ export default function App() {
       <section id="projects" className="section">
         <div className="container">
           <div className="section-header">
-            <span className="section-eyebrow">Selected Portfolio</span>
-            <h2 className="section-title">Featured Projects</h2>
+            <span className="section-eyebrow">{t("projects.eyebrow")}</span>
+            <h2 className="section-title">{t("projects.title")}</h2>
             <p className="section-desc">
-              Real-world systems demonstrating full-stack AI development, deep learning computer vision, Azure data engineering, and data analytics.
+              {t("projects.desc")}
             </p>
           </div>
 
@@ -555,9 +578,9 @@ export default function App() {
                 )}
 
                 <div className="project-tags">
-                  {project.tags.slice(0, 6).map((t, i) => (
+                  {project.tags.slice(0, 6).map((tTag, i) => (
                     <span key={i} className="tech-tag">
-                      {t}
+                      {tTag}
                     </span>
                   ))}
                 </div>
@@ -567,7 +590,7 @@ export default function App() {
                     className="deep-dive-btn"
                     onClick={() => setSelectedProject(project)}
                   >
-                    <span>Architecture Deep Dive</span>
+                    <span>{t("projects.deepDiveBtn")}</span>
                     <Icon name="arrow-right" size={15} />
                   </button>
                   <a
@@ -576,7 +599,7 @@ export default function App() {
                     rel="noopener noreferrer"
                     className="btn btn-ghost btn-sm"
                   >
-                    GitHub
+                    {t("projects.githubBtn")}
                   </a>
                 </div>
               </div>
@@ -599,11 +622,11 @@ export default function App() {
               <div>
                 <div className="resume-badge">
                   <Icon name="shield-check" size={13} />
-                  <span>CURRICULUM VITAE • {resumeData.updatedDate.toUpperCase()}</span>
+                  <span>{t("resumeShowcase.cvBadge")} • {resumeData.updatedDate.toUpperCase()}</span>
                 </div>
-                <h3 className="resume-showcase-title">Official Resume & Experience Record</h3>
+                <h3 className="resume-showcase-title">{t("resumeShowcase.title")}</h3>
                 <p className="resume-showcase-subtitle">
-                  Software Engineer @ Instaresz • VBIT B.Tech CSE (9.12 CGPA) • Deep Learning & Azure Data Engineering
+                  {t("resumeShowcase.subtitle")}
                 </p>
               </div>
             </div>
@@ -616,7 +639,7 @@ export default function App() {
                 title="Open interactive in-browser preview"
               >
                 <Icon name="sparkles" size={16} />
-                <span>Preview Resume</span>
+                <span>{t("resumeShowcase.previewBtn")}</span>
               </button>
 
               <a
@@ -627,7 +650,7 @@ export default function App() {
                 title="Download PDF directly to your device"
               >
                 <Icon name="arrow-right" size={16} style={{ transform: "rotate(90deg)" }} />
-                <span>Download (.PDF)</span>
+                <span>{t("resumeShowcase.downloadBtn")}</span>
               </a>
 
               <button
@@ -637,7 +660,7 @@ export default function App() {
                 title="Copy Google Drive share link"
               >
                 <Icon name={resumeCopied ? "check" : "copy"} size={16} />
-                <span>{resumeCopied ? "Link Copied!" : "Share Link"}</span>
+                <span>{resumeCopied ? t("resumeShowcase.copiedToast") : t("resumeShowcase.shareBtn")}</span>
               </button>
 
               <a
@@ -648,7 +671,7 @@ export default function App() {
                 title="Open in Google Drive in new tab"
               >
                 <Icon name="external-link" size={16} />
-                <span>Drive View</span>
+                <span>{t("resumeShowcase.driveView")}</span>
               </a>
             </div>
           </div>
@@ -659,10 +682,10 @@ export default function App() {
       <section id="experience" className="section">
         <div className="container">
           <div className="section-header">
-            <span className="section-eyebrow">Career & Roles</span>
-            <h2 className="section-title">Work Experience</h2>
+            <span className="section-eyebrow">{t("experience.eyebrow")}</span>
+            <h2 className="section-title">{t("experience.title")}</h2>
             <p className="section-desc">
-              1.5+ years of engineering experience delivering production web & mobile platforms, data engineering pipelines, and cloud AI solutions.
+              {t("experience.desc")}
             </p>
           </div>
 
@@ -706,10 +729,10 @@ export default function App() {
       <section id="education" className="section" style={{ background: "rgba(255, 255, 255, 0.01)" }}>
         <div className="container">
           <div className="section-header">
-            <span className="section-eyebrow">Academic Background</span>
-            <h2 className="section-title">Education Details</h2>
+            <span className="section-eyebrow">{t("education.eyebrow")}</span>
+            <h2 className="section-title">{t("education.title")}</h2>
             <p className="section-desc">
-              Formal foundations in Computer Science & Engineering with distinction and academic excellence.
+              {t("education.desc")}
             </p>
           </div>
 
@@ -740,10 +763,10 @@ export default function App() {
       <section id="certifications" className="section">
         <div className="container">
           <div className="section-header">
-            <span className="section-eyebrow">Credentials</span>
-            <h2 className="section-title">Professional Certifications</h2>
+            <span className="section-eyebrow">{t("certifications.eyebrow")}</span>
+            <h2 className="section-title">{t("certifications.title")}</h2>
             <p className="section-desc">
-              Industry-recognized credentials in Artificial Intelligence, Full-Stack .NET, AWS Data Engineering, and Zero Trust security.
+              {t("certifications.desc")}
             </p>
           </div>
 
@@ -771,7 +794,7 @@ export default function App() {
                     rel="noopener noreferrer"
                     className="cert-verify-link"
                   >
-                    <span>Verify Credential</span>
+                    <span>{t("certifications.verifyLink")}</span>
                     <Icon name="external-link" size={13} />
                   </a>
                 )}
@@ -785,10 +808,10 @@ export default function App() {
       <section className="section" style={{ background: "rgba(0, 0, 0, 0.2)" }}>
         <div className="container">
           <div className="section-header">
-            <span className="section-eyebrow">Accolades</span>
-            <h2 className="section-title">Key Achievements</h2>
+            <span className="section-eyebrow">{t("achievements.eyebrow")}</span>
+            <h2 className="section-title">{t("achievements.title")}</h2>
             <p className="section-desc">
-              National competitive coding rankings, algorithmic performance badges, and industry recognitions.
+              {t("achievements.desc")}
             </p>
           </div>
 
@@ -823,22 +846,22 @@ export default function App() {
             <div className="footer-brand">
               <h4 className="footer-logo-text">{personalInfo.name}</h4>
               <p className="footer-desc">
-                {personalInfo.tagline}
+                {t("footer.tagline")}
               </p>
             </div>
             <ul className="footer-links">
-              <li><a href="#about">About</a></li>
-              <li><a href="#skills">Skills</a></li>
-              <li><a href="#projects">Projects</a></li>
-              <li><a href="#experience">Experience</a></li>
-              <li><a href="#education">Education</a></li>
-              <li><a href="#certifications">Certifications</a></li>
-              <li><a href="#contact">Contact</a></li>
+              <li><a href="#about">{t("nav.about")}</a></li>
+              <li><a href="#skills">{t("nav.skills")}</a></li>
+              <li><a href="#projects">{t("nav.projects")}</a></li>
+              <li><a href="#experience">{t("nav.experience")}</a></li>
+              <li><a href="#education">{t("nav.education")}</a></li>
+              <li><a href="#certifications">{t("nav.certifications")}</a></li>
+              <li><a href="#contact">{t("nav.contact")}</a></li>
             </ul>
           </div>
 
           <div className="footer-bottom">
-            <span>© {new Date().getFullYear()} {personalInfo.name}. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} {personalInfo.name}. {t("footer.rights")}</span>
             <div className="footer-social-row">
               <a
                 href={personalInfo.github}

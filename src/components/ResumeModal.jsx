@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "./Icons";
 import { resumeData } from "../data/portfolioData";
+import { useLanguage } from "../context/LanguageContext";
 
 export const ResumeModal = ({ isOpen, onClose }) => {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
   const [resumeTab, setResumeTab] = useState("preview");
 
@@ -13,11 +15,13 @@ export const ResumeModal = ({ isOpen, onClose }) => {
       if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", handleKeyDown);
-    document.body.style.overflow = "hidden";
+    document.documentElement.classList.add("modal-open");
+    document.body.classList.add("modal-open");
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "unset";
+      document.documentElement.classList.remove("modal-open");
+      document.body.classList.remove("modal-open");
     };
   }, [isOpen, onClose]);
 
@@ -36,10 +40,10 @@ export const ResumeModal = ({ isOpen, onClose }) => {
           <div className="resume-modal-title-wrap">
             <div className="resume-badge">
               <Icon name="sparkles" size={14} />
-              <span>OFFICIAL RESUME</span>
+              <span>{t("modals.resumeModal.badge", "OFFICIAL RESUME")}</span>
             </div>
-            <h3 className="resume-modal-title">Anil Kumar Garlapati — Resume</h3>
-            <span className="resume-modal-subtitle">Software Engineer • Full-Stack & Data Analyst</span>
+            <h3 className="resume-modal-title">{t("modals.resumeModal.title", "Anil Kumar Garlapati — Resume")}</h3>
+            <span className="resume-modal-subtitle">{t("modals.resumeModal.subtitle", "Software Engineer • Full-Stack & Data Analyst")}</span>
           </div>
 
           <div className="resume-modal-actions">
@@ -49,7 +53,7 @@ export const ResumeModal = ({ isOpen, onClose }) => {
               title="Copy Google Drive share link"
             >
               <Icon name={copied ? "check" : "copy"} size={16} />
-              <span>{copied ? "Link Copied!" : "Share Link"}</span>
+              <span>{copied ? t("resumeShowcase.copiedToast", "Link Copied!") : t("resumeShowcase.shareBtn", "Share Link")}</span>
             </button>
 
             <a
@@ -59,7 +63,7 @@ export const ResumeModal = ({ isOpen, onClose }) => {
               title="Download Resume PDF"
             >
               <Icon name="arrow-right" size={16} style={{ transform: "rotate(90deg)" }} />
-              <span>Download PDF</span>
+              <span>{t("resumeShowcase.downloadBtn", "Download PDF")}</span>
             </a>
 
             <a
@@ -70,7 +74,7 @@ export const ResumeModal = ({ isOpen, onClose }) => {
               title="Open in Google Drive"
             >
               <Icon name="external-link" size={16} />
-              <span>Drive View</span>
+              <span>{t("resumeShowcase.driveView", "Drive View")}</span>
             </a>
 
             <button
@@ -90,14 +94,14 @@ export const ResumeModal = ({ isOpen, onClose }) => {
             onClick={() => setResumeTab("preview")}
           >
             <Icon name="sparkles" size={14} />
-            <span>Live PDF Document Viewer</span>
+            <span>{t("modals.resumeModal.tabLivePreview", t("modals.resumeModal.tabPdf", "Live PDF Document Viewer"))}</span>
           </button>
           <button
             className={`resume-tab-btn ${resumeTab === "summary" ? "active" : ""}`}
             onClick={() => setResumeTab("summary")}
           >
             <Icon name="shield-check" size={14} />
-            <span>Fast Overview & Highlights</span>
+            <span>{t("modals.resumeModal.tabHighlights", t("modals.resumeModal.tabOverview", "Fast Overview & Highlights"))}</span>
           </button>
         </div>
 

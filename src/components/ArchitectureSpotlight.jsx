@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Icon } from "./Icons";
+import { useLanguage } from "../context/LanguageContext";
 
 export const ArchitectureSpotlight = () => {
+  const { t } = useLanguage();
   const [activeStep, setActiveStep] = useState(0);
 
   const steps = [
@@ -42,10 +44,10 @@ export const ArchitectureSpotlight = () => {
   return (
     <section id="architecture" className="section architecture-section">
       <div className="section-header">
-        <span className="section-eyebrow">Engineering Methodology</span>
-        <h2 className="section-title">System Architecture Blueprint</h2>
+        <span className="section-eyebrow">{t("architecture.eyebrow")}</span>
+        <h2 className="section-title">{t("architecture.title")}</h2>
         <p className="section-desc">
-          How I architect end-to-end intelligent applications: from raw cloud ingestion and distributed caching to statistical modeling and interactive interfaces.
+          {t("architecture.desc")}
         </p>
       </div>
 
@@ -88,11 +90,11 @@ export const ArchitectureSpotlight = () => {
         <p className="arch-details-text">{steps[activeStep].details}</p>
 
         <div className="arch-tech-stack">
-          <span className="arch-tech-title">Technologies Involved:</span>
+          <span className="arch-tech-title">{t("architecture.techsInvolved")}</span>
           <div className="arch-tech-chips">
-            {steps[activeStep].techs.map((t, i) => (
+            {steps[activeStep].techs.map((tTech, i) => (
               <span key={i} className="arch-chip">
-                {t}
+                {tTech}
               </span>
             ))}
           </div>
@@ -126,7 +128,7 @@ export const ArchitectureSpotlight = () => {
             style={{ opacity: activeStep === 0 ? 0.45 : 1 }}
           >
             <Icon name="arrow-right" size={15} style={{ transform: "rotate(180deg)" }} />
-            <span>Previous Stage</span>
+            <span>{t("architecture.prevStage")}</span>
           </button>
 
           <div className="arch-step-dots">
@@ -146,7 +148,7 @@ export const ArchitectureSpotlight = () => {
             disabled={activeStep === steps.length - 1}
             style={{ opacity: activeStep === steps.length - 1 ? 0.45 : 1 }}
           >
-            <span>Next Stage</span>
+            <span>{t("architecture.nextStage")}</span>
             <Icon name="arrow-right" size={15} />
           </button>
         </div>
